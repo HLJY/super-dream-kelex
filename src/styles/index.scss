@@ -5,12 +5,12 @@ body{
   font-family: $font !important;
 }
 
-$width: 400px;
-$maxWidth: 600px;
+$width: 1000px;
+$maxWidth: 1000px;
 $gray: slategray;
 $pink: lightcoral;
 
-a { 
+a {
   color: $pink;
   text-decoration: none;
 }
@@ -147,11 +147,11 @@ button {
   .rect5 {
     animation-delay: -0.8s;
   }
-  
+
   @keyframes sk-stretchdelay {
-    0%, 40%, 100% { 
+    0%, 40%, 100% {
       transform: scaleY(0.4);
-    }  20% { 
+    }  20% {
       transform: scaleY(.8);
     }
   }

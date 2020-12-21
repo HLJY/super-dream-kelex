@@ -9,16 +9,16 @@
 </head>
 
 <body>
-  <h1><a href="https://github.com/shaqian/tfjs-yolo" target="_blank">Super Dream Kelex</a> </h1>
+  <h1>Super Dream Kelex</h1>
   <div class="description">
     <h4>
       Welcome to the super lair. Please show your ID.
     </h4>
   </div>
 
-  <div class="container">
+  <div id="buttonGroup" class="container">
     <div class="button-group">
-      <button id="v3tiny">Start</button>
+      <button id="v3tiny">Press to turn on Kelex</button>
     </div>
   </div>
 
@@ -34,6 +34,19 @@
       </div>
       <div id="rects"></div>
       <video autoplay playsinline muted id="webcam"></video>
+    </div>
+  </div>
+
+  <div class="welcome-container">
+    <img id="welcome" src="src/images/welcome-rainbow-diamond-club.jpg"><br />
+  </div>
+  <div class="no-entry-container">
+    <img id="no-entry" src="src/images/no-entry.jpeg"><br />
+  </div>
+
+  <div class="container">
+    <div id="canvasid">
+      <canvas id="canvas"></canvas>
     </div>
   </div>
 

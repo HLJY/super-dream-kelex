@@ -10,6 +10,9 @@ if ('serviceWorker' in navigator) {
 import './styles/index.scss';
 import * as tf from '@tensorflow/tfjs';
 import yolo from 'tfjs-yolo';
+import QrScanner from 'qr-scanner'
+import QrScannerWorkerPath from '!!file-loader!../node_modules/qr-scanner/qr-scanner-worker.min.js';
+QrScanner.WORKER_PATH = QrScannerWorkerPath;
 
 const loader = document.getElementById('loader');
 const spinner = document.getElementById('spinner');
@@ -18,13 +21,18 @@ const wrapper = document.getElementById('webcam-wrapper');
 const rects = document.getElementById('rects');
 const v3tiny = document.getElementById('v3tiny');
 
+const canvas = document.getElementById('canvas');
+canvas.width = 480;
+canvas.height = 360;
+
 let myYolo;
 let selected;
+let lockEnter = false;
 
 (async function main() {
   try {
     await setupWebCam();
-
+    // hideAll();
     v3tiny.addEventListener('click', () => load(v3tiny));
 
     run();
@@ -65,6 +73,8 @@ function setButtons(button) {
   v3tiny.className = '';
   button.className = 'selected';
   selected = button;
+
+  document.getElementById('buttonGroup').style.display = "none";
 }
 
 function progress(totalModel) {
@@ -101,14 +111,14 @@ async function run() {
 }
 
 async function predict(threshold) {
-  console.log(`Start with ${tf.memory().numTensors} tensors`);
+  // console.log(`Start with ${tf.memory().numTensors} tensors`);
 
   const start = performance.now();
   const boxes = await myYolo.predict(webcam, { scoreThreshold: threshold });
   const end = performance.now();
 
-  console.log(`Inference took ${end - start} ms`);
-  console.log(`End with ${tf.memory().numTensors} tensors`);
+  // console.log(`Inference took ${end - start} ms`);
+  // console.log(`End with ${tf.memory().numTensors} tensors`);
 
   drawBoxes(boxes);
 }
@@ -116,7 +126,16 @@ async function predict(threshold) {
 let colors = {};
 
 function drawBoxes(boxes) {
-  console.log(boxes);
+  // console.log(boxes);
+
+  const foundPerson = boxes.find(b => b.class === 'person')
+
+  if (foundPerson) {
+    personFound();
+  } else {
+    hideAll();
+  }
+
   rects.innerHTML = '';
 
   const cw = webcam.clientWidth;
@@ -151,4 +170,52 @@ function drawBoxes(boxes) {
     rect.appendChild(text);
     rects.appendChild(rect);
   });
+}
+
+function personFound() {
+  /* set the canvas to the dimensions of the video feed */
+  canvas.width = webcam.videoWidth;
+  canvas.height = webcam.videoHeight;
+  /* make the snapshot */
+  canvas.getContext('2d').drawImage(webcam, 0, 0, canvas.width, canvas.height);
+
+  QrScanner.scanImage(canvas)
+    .then(result => {
+      showEnter();
+      console.log('---------------!!!!WIN!!!!', result)
+    })
+    .catch(error => {
+      showNoEntry();
+      // console.log(error || 'No QR code found.')
+    });
+}
+
+function showEnter() {
+  var img = document.getElementById('welcome');
+  img.style.visibility = 'visible';
+  var img2 = document.getElementById('no-entry');
+  img2.style.visibility = 'hidden';
+
+  lockEnter = true;
+  setTimeout(() => {
+    lockEnter = false;
+  }, 5000)
+}
+
+function showNoEntry() {
+  if (lockEnter) return
+
+  var img = document.getElementById('no-entry');
+  img.style.visibility = 'visible';
+  var img2 = document.getElementById('welcome');
+  img2.style.visibility = 'hidden';
+}
+
+function hideAll() {
+  if (lockEnter) return
+
+  var img = document.getElementById('welcome');
+  img.style.visibility = 'hidden';
+  var img2 = document.getElementById('no-entry');
+  img2.style.visibility = 'hidden';
 }
