@@ -181,7 +181,9 @@ function personFound() {
 
   QrScanner.scanImage(canvas)
     .then(result => {
-      showEnter();
+      if (result === 'Secret hideout') {
+        showEnter();
+      }
       console.log('---------------!!!!WIN!!!!', result)
     })
     .catch(error => {
@@ -191,10 +193,10 @@ function personFound() {
 }
 
 function showEnter() {
-  var img = document.getElementById('welcome');
-  img.style.visibility = 'visible';
-  var img2 = document.getElementById('no-entry');
-  img2.style.visibility = 'hidden';
+  var img = document.getElementById('welcome-container');
+  img.style.display = 'inline';
+  var img2 = document.getElementById('no-entry-container');
+  img2.style.display = 'none';
 
   lockEnter = true;
   setTimeout(() => {
@@ -205,17 +207,17 @@ function showEnter() {
 function showNoEntry() {
   if (lockEnter) return
 
-  var img = document.getElementById('no-entry');
-  img.style.visibility = 'visible';
-  var img2 = document.getElementById('welcome');
-  img2.style.visibility = 'hidden';
+  var img = document.getElementById('no-entry-container');
+  img.style.display = 'inline';
+  var img2 = document.getElementById('welcome-container');
+  img2.style.display = 'none';
 }
 
 function hideAll() {
   if (lockEnter) return
 
-  var img = document.getElementById('welcome');
-  img.style.visibility = 'hidden';
-  var img2 = document.getElementById('no-entry');
-  img2.style.visibility = 'hidden';
+  var img = document.getElementById('welcome-container');
+  img.style.display = 'none';
+  var img2 = document.getElementById('no-entry-container');
+  img2.style.display = 'none';
 }
